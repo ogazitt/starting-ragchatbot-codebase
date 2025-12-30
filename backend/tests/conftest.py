@@ -2,10 +2,15 @@
 import pytest
 import os
 import sys
-from unittest.mock import Mock, MagicMock
+from unittest.mock import Mock, MagicMock, patch
 
 # Add parent directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from pydantic import BaseModel
+from typing import List, Optional, Union, Dict
 
 from vector_store import VectorStore, SearchResults
 from search_tools import CourseSearchTool, CourseOutlineTool, ToolManager
@@ -212,3 +217,115 @@ def create_text_response(text: str):
     response.stop_reason = "end_turn"
 
     return response
+
+
+# API Testing Fixtures
+
+class QueryRequest(BaseModel):
+    """Request model for course queries"""
+    query: str
+    session_id: Optional[str] = None
+
+
+class QueryResponse(BaseModel):
+    """Response model for course queries"""
+    answer: str
+    sources: List[Union[str, Dict[str, Optional[str]]]]
+    session_id: str
+
+
+class CourseStats(BaseModel):
+    """Response model for course statistics"""
+    total_courses: int
+    course_titles: List[str]
+
+
+@pytest.fixture
+def mock_rag_system():
+    """Create a mock RAG system for API testing"""
+    mock_rag = MagicMock(spec=RAGSystem)
+
+    # Mock session manager
+    mock_session_manager = MagicMock()
+    mock_session_manager.create_session.return_value = "test-session-123"
+    mock_rag.session_manager = mock_session_manager
+
+    # Mock query method
+    mock_rag.query.return_value = (
+        "This is a test response about the course content.",
+        [{"course": "Test Course", "lesson": "Lesson 1"}]
+    )
+
+    # Mock get_course_analytics
+    mock_rag.get_course_analytics.return_value = {
+        "total_courses": 2,
+        "course_titles": ["MCP Course", "AI Agents Course"]
+    }
+
+    return mock_rag
+
+
+def create_test_app(mock_rag_system):
+    """
+    Create a test FastAPI app without static file mounting.
+
+    This avoids the issue where the production app tries to mount
+    static files from a directory that doesn't exist in tests.
+    """
+    from fastapi import HTTPException
+
+    app = FastAPI(title="Course Materials RAG System - Test")
+
+    @app.post("/api/query", response_model=QueryResponse)
+    async def query_documents(request: QueryRequest):
+        try:
+            session_id = request.session_id
+            if not session_id:
+                session_id = mock_rag_system.session_manager.create_session()
+
+            answer, sources = mock_rag_system.query(request.query, session_id)
+
+            return QueryResponse(
+                answer=answer,
+                sources=sources,
+                session_id=session_id
+            )
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @app.get("/api/courses", response_model=CourseStats)
+    async def get_course_stats():
+        try:
+            analytics = mock_rag_system.get_course_analytics()
+            return CourseStats(
+                total_courses=analytics["total_courses"],
+                course_titles=analytics["course_titles"]
+            )
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @app.delete("/api/session/{session_id}")
+    async def clear_session(session_id: str):
+        try:
+            mock_rag_system.session_manager.clear_session(session_id)
+            return {"status": "success", "message": f"Session {session_id} cleared"}
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @app.get("/")
+    async def root():
+        return {"message": "Course Materials RAG System API"}
+
+    return app
+
+
+@pytest.fixture
+def test_app(mock_rag_system):
+    """Create a test FastAPI app with mocked dependencies"""
+    return create_test_app(mock_rag_system)
+
+
+@pytest.fixture
+def client(test_app):
+    """Create a test client for the FastAPI app"""
+    return TestClient(test_app)
