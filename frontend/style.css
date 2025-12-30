@@ -778,3 +778,144 @@ details[open] .suggested-header::before {
         width: 280px;
     }
 }
+
+/* Theme Toggle Button */
+.theme-toggle {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1000;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--border-color);
+    background: var(--surface);
+    color: var(--text-primary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow);
+}
+
+.theme-toggle:hover {
+    background: var(--surface-hover);
+    border-color: var(--primary-color);
+    transform: scale(1.05);
+}
+
+.theme-toggle:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+.theme-toggle:active {
+    transform: scale(0.95);
+}
+
+/* Icon transitions */
+.theme-toggle .sun-icon,
+.theme-toggle .moon-icon {
+    position: absolute;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.theme-toggle .sun-icon {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.5);
+}
+
+.theme-toggle .moon-icon {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+}
+
+/* Light theme icon states */
+[data-theme="light"] .theme-toggle .sun-icon {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+}
+
+[data-theme="light"] .theme-toggle .moon-icon {
+    opacity: 0;
+    transform: rotate(90deg) scale(0.5);
+}
+
+/* Light Theme Variables */
+[data-theme="light"] {
+    --primary-color: #2563eb;
+    --primary-hover: #1d4ed8;
+    --background: #f8fafc;
+    --surface: #ffffff;
+    --surface-hover: #f1f5f9;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --border-color: #e2e8f0;
+    --user-message: #2563eb;
+    --assistant-message: #f1f5f9;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --focus-ring: rgba(37, 99, 235, 0.3);
+    --welcome-bg: #e0f2fe;
+    --welcome-border: #2563eb;
+}
+
+/* Smooth theme transitions for all elements */
+body,
+.container,
+.sidebar,
+.chat-main,
+.chat-container,
+.chat-messages,
+.message-content,
+.chat-input-container,
+#chatInput,
+#sendButton,
+.new-chat-button,
+.stat-item,
+.suggested-item,
+.course-title-item,
+.stats-header,
+.suggested-header,
+.sources-collapsible,
+.source-item {
+    transition: background-color 0.3s ease,
+                color 0.3s ease,
+                border-color 0.3s ease,
+                box-shadow 0.3s ease;
+}
+
+/* Light theme scrollbar */
+[data-theme="light"] .chat-messages::-webkit-scrollbar-track,
+[data-theme="light"] .sidebar::-webkit-scrollbar-track {
+    background: var(--background);
+}
+
+[data-theme="light"] .chat-messages::-webkit-scrollbar-thumb,
+[data-theme="light"] .sidebar::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+}
+
+[data-theme="light"] .chat-messages::-webkit-scrollbar-thumb:hover,
+[data-theme="light"] .sidebar::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Light theme code blocks */
+[data-theme="light"] .message-content code {
+    background-color: rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .message-content pre {
+    background-color: rgba(0, 0, 0, 0.06);
+}
+
+/* Responsive theme toggle */
+@media (max-width: 768px) {
+    .theme-toggle {
+        top: 0.75rem;
+        right: 0.75rem;
+        width: 40px;
+        height: 40px;
+    }
+}
