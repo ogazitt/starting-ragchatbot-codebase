@@ -164,3 +164,51 @@ def mock_anthropic_client():
     mock_client.messages.create = Mock(side_effect=[mock_tool_response, mock_final_response])
 
     return mock_client
+
+
+# Helper functions for creating test responses
+
+def create_tool_use_response(tool_name: str, tool_input: dict, tool_id: str = "tool_123"):
+    """
+    Helper to create a mock response with tool_use.
+
+    Args:
+        tool_name: Name of the tool to call
+        tool_input: Input parameters for the tool
+        tool_id: Unique ID for this tool use
+
+    Returns:
+        Mock response object with tool_use content
+    """
+    tool_block = MagicMock()
+    tool_block.type = "tool_use"
+    tool_block.name = tool_name
+    tool_block.input = tool_input
+    tool_block.id = tool_id
+
+    response = MagicMock()
+    response.content = [tool_block]
+    response.stop_reason = "tool_use"
+
+    return response
+
+
+def create_text_response(text: str):
+    """
+    Helper to create a mock response with text content.
+
+    Args:
+        text: The response text
+
+    Returns:
+        Mock response object with text content
+    """
+    text_block = MagicMock()
+    text_block.type = "text"
+    text_block.text = text
+
+    response = MagicMock()
+    response.content = [text_block]
+    response.stop_reason = "end_turn"
+
+    return response
