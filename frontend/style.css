@@ -253,6 +253,7 @@ header h1 {
 .sources-collapsible summary {
     cursor: pointer;
     padding: 0.25rem 0.5rem;
+    -webkit-user-select: none;
     user-select: none;
     font-weight: 500;
 }
@@ -607,6 +608,7 @@ details[open] .suggested-header::before {
     padding: 0.5rem 0;
     list-style: none;
     display: block;
+    -webkit-user-select: none;
     user-select: none;
 }
 
