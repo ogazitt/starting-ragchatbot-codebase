@@ -76,7 +76,12 @@ async function sendMessage() {
             })
         });
 
-        if (!response.ok) throw new Error('Query failed');
+        if (!response.ok) {
+            // Try to get detailed error message from backend
+            const errorData = await response.json().catch(() => ({}));
+            const errorMessage = errorData.detail || `Query failed (HTTP ${response.status})`;
+            throw new Error(errorMessage);
+        }
 
         const data = await response.json();
         
@@ -92,7 +97,14 @@ async function sendMessage() {
     } catch (error) {
         // Replace loading message with error
         loadingMessage.remove();
-        addMessage(`Error: ${error.message}`, 'assistant');
+
+        // Provide helpful error message
+        let errorMessage = error.message;
+        if (error.name === 'TypeError' && error.message.includes('fetch')) {
+            errorMessage = 'Network error: Unable to connect to server. Please check if the backend is running.';
+        }
+
+        addMessage(`Error: ${errorMessage}`, 'assistant');
     } finally {
         chatInput.disabled = false;
         sendButton.disabled = false;
