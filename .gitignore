@@ -28,4 +28,10 @@ uploads/
 
 # OS
 .DS_Store
-Thumbs.dbbackend/test_chroma_real/
+Thumbs.db
+
+# Test databases
+backend/test_chroma_real/
+
+# Claude Code local settings
+.claude/settings.local.json
