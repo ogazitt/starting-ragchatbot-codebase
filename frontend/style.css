@@ -114,10 +114,9 @@ header h1 {
 /* New Chat Button */
 .new-chat-button {
     width: 100%;
-    padding: 0.75rem 1rem;
-    background: var(--background);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
+    padding: 0.5rem 0;
+    background: none;
+    border: none;
     color: var(--text-secondary);
     font-size: 0.875rem;
     font-weight: 600;
@@ -125,7 +124,7 @@ header h1 {
     letter-spacing: 0.5px;
     cursor: pointer;
     transition: all 0.2s ease;
-    text-align: center;
+    text-align: left;
 }
 
 .new-chat-button:focus {
@@ -134,14 +133,7 @@ header h1 {
 }
 
 .new-chat-button:hover {
-    background: var(--surface-hover);
-    border-color: var(--primary-color);
     color: var(--primary-color);
-    transform: translateY(-1px);
-}
-
-.new-chat-button:active {
-    transform: translateY(0);
 }
 
 /* Main Chat Area */
