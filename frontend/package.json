@@ -1,0 +1,21 @@
+{
+  "name": "course-materials-assistant-frontend",
+  "version": "1.0.0",
+  "description": "Frontend for Course Materials Assistant - a RAG-based chatbot",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "quality": "npm run format:check && npm run lint",
+    "quality:fix": "npm run format && npm run lint:fix"
+  },
+  "devDependencies": {
+    "eslint": "^9.17.0",
+    "eslint-config-prettier": "^9.1.0",
+    "globals": "^15.14.0",
+    "prettier": "^3.4.2"
+  }
+}

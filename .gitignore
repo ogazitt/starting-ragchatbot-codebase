@@ -30,6 +30,9 @@ uploads/
 .DS_Store
 Thumbs.db
 
+# Node.js (frontend)
+frontend/node_modules/
+
 # Test databases
 backend/test_chroma_real/
 
