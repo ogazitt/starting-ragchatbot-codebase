@@ -28,8 +28,13 @@ function setupEventListeners() {
     chatInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') sendMessage();
     });
-    
-    
+
+    // New chat button
+    const newChatButton = document.getElementById('newChatButton');
+    if (newChatButton) {
+        newChatButton.addEventListener('click', handleNewChat);
+    }
+
     // Suggested questions
     document.querySelectorAll('.suggested-item').forEach(button => {
         button.addEventListener('click', (e) => {
@@ -122,10 +127,26 @@ function addMessage(content, type, sources = null, isWelcome = false) {
     let html = `<div class="message-content">${displayContent}</div>`;
     
     if (sources && sources.length > 0) {
+        // Build HTML for each source - handle both string and object formats
+        const sourceItems = sources.map(source => {
+            if (typeof source === 'string') {
+                // Backward compatibility with string sources
+                return `<div class="source-item">${escapeHtml(source)}</div>`;
+            } else if (source && source.text) {
+                // New object format with optional URL
+                if (source.url) {
+                    return `<a href="${source.url}" target="_blank" rel="noopener noreferrer" class="source-item source-link">${escapeHtml(source.text)}</a>`;
+                } else {
+                    return `<div class="source-item">${escapeHtml(source.text)}</div>`;
+                }
+            }
+            return '';
+        }).filter(html => html).join('');
+
         html += `
             <details class="sources-collapsible">
                 <summary class="sources-header">Sources</summary>
-                <div class="sources-content">${sources.join(', ')}</div>
+                <div class="sources-content">${sourceItems}</div>
             </details>
         `;
     }
@@ -150,6 +171,34 @@ async function createNewSession() {
     currentSessionId = null;
     chatMessages.innerHTML = '';
     addMessage('Welcome to the Course Materials Assistant! I can help you with questions about courses, lessons and specific content. What would you like to know?', 'assistant', null, true);
+}
+
+async function handleNewChat() {
+    try {
+        // If we have an active session, clear it on the backend
+        if (currentSessionId) {
+            try {
+                const response = await fetch(`${API_URL}/session/${currentSessionId}`, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) {
+                    console.warn('Failed to clear session on backend:', await response.text());
+                }
+            } catch (error) {
+                console.warn('Error clearing session on backend:', error);
+                // Continue anyway - don't block UI reset
+            }
+        }
+
+        // Reset frontend state
+        createNewSession();
+
+    } catch (error) {
+        console.error('Error creating new chat:', error);
+        // Still reset UI even if backend cleanup failed
+        createNewSession();
+    }
 }
 
 // Load course statistics
