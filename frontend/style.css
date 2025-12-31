@@ -49,25 +49,32 @@ body {
   padding: 0;
 }
 
-/* Header - Hidden */
+/* Header */
 header {
-  display: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.header-content {
+  flex: 1;
 }
 
 header h1 {
-  font-size: 1.75rem;
+  font-size: 1.5rem;
   font-weight: 700;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--text-primary);
   margin: 0;
 }
 
 .subtitle {
-  font-size: 0.95rem;
+  font-size: 0.875rem;
   color: var(--text-secondary);
-  margin-top: 0.5rem;
+  margin-top: 0.25rem;
 }
 
 /* Main Content Area with Sidebar */
@@ -746,11 +753,20 @@ details[open] .suggested-header::before {
   }
 
   header {
-    padding: 1rem;
+    padding: 0.75rem 1rem;
   }
 
   header h1 {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
+  }
+
+  .subtitle {
+    font-size: 0.75rem;
+  }
+
+  .theme-toggle {
+    width: 40px;
+    height: 40px;
   }
 
   .chat-messages {
@@ -794,22 +810,19 @@ details[open] .suggested-header::before {
 
 /* Theme Toggle Button */
 .theme-toggle {
-    position: fixed;
-    top: 1rem;
-    right: 1rem;
-    z-index: 1000;
     width: 44px;
     height: 44px;
     border-radius: 50%;
     border: 1px solid var(--border-color);
-    background: var(--surface);
+    background: var(--background);
     color: var(--text-primary);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
-    box-shadow: var(--shadow);
+    flex-shrink: 0;
+    margin-left: 1rem;
 }
 
 .theme-toggle:hover {
@@ -921,14 +934,4 @@ body,
 
 [data-theme="light"] .message-content pre {
     background-color: rgba(0, 0, 0, 0.06);
-}
-
-/* Responsive theme toggle */
-@media (max-width: 768px) {
-    .theme-toggle {
-        top: 0.75rem;
-        right: 0.75rem;
-        width: 40px;
-        height: 40px;
-    }
 }
